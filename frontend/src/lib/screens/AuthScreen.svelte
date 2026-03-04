@@ -34,7 +34,8 @@
             </div>
 
             <p class="text-sm text-base-content/70">
-                WhatsApp-like messaging powered by PocketBase authentication and storage.
+                WhatsApp-like messaging powered by PocketBase authentication and
+                storage.
             </p>
 
             <div class="grid w-full gap-3">
@@ -74,7 +75,11 @@
                 <div class="alert alert-error py-2 text-sm">{authError}</div>
             {/if}
 
-            <button class="btn btn-primary w-full" disabled={authLoading} on:click={onSubmit}>
+            <button
+                class="btn btn-primary w-full"
+                disabled={authLoading}
+                on:click={onSubmit}
+            >
                 {authLoading
                     ? "Please wait..."
                     : authMode === "signin"

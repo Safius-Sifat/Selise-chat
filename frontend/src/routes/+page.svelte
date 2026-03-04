@@ -139,10 +139,10 @@
         return "Something went wrong";
     };
 
-    const requestJson = async <T,>(
+    async function requestJson<T>(
         path: string,
         requestInit: RequestInit = {},
-    ): Promise<T> => {
+    ): Promise<T> {
         const normalizedRequestInit = requestInit ?? {};
         const headers = new Headers(normalizedRequestInit.headers ?? {});
 
@@ -175,7 +175,7 @@
         }
 
         return payload as T;
-    };
+    }
 
     const sortConversationsByActivity = (
         items: Conversation[],
