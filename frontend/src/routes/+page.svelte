@@ -405,8 +405,8 @@
     });
 </script>
 
-<main class="min-h-screen bg-base-200 p-3 md:p-6">
-    <div class="mx-auto flex max-w-6xl flex-col gap-4">
+<main class="h-dvh overflow-hidden bg-base-200 p-3 md:p-4">
+    <div class="mx-auto flex h-full max-w-6xl flex-col gap-4 overflow-hidden">
         <div
             class="navbar rounded-box border border-base-300 bg-base-100 px-4 shadow-sm"
         >
@@ -465,9 +465,9 @@
             </div>
         </div>
 
-        <div class="grid min-h-[80vh] gap-4 lg:grid-cols-[320px_1fr]">
-            <aside class="card border border-base-300 bg-base-100 shadow-sm">
-                <div class="card-body gap-4">
+        <div class="grid min-h-0 flex-1 gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
+            <aside class="card min-h-0 overflow-hidden border border-base-300 bg-base-100 shadow-sm">
+                <div class="card-body min-h-0 gap-4 overflow-y-auto">
                     <h2 class="card-title text-base">
                         {activeTab === "public"
                             ? "Public Channel"
@@ -573,8 +573,8 @@
                 </div>
             </aside>
 
-            <section class="card border border-base-300 bg-base-100 shadow-sm">
-                <div class="card-body h-full p-0">
+            <section class="card min-h-0 overflow-hidden border border-base-300 bg-base-100 shadow-sm">
+                <div class="card-body flex h-full min-h-0 flex-col p-0">
                     <div class="border-b border-base-300 px-4 py-3">
                         <h2 class="font-semibold">#{activeChannelLabel()}</h2>
                         <p class="text-sm text-base-content/70">
@@ -586,7 +586,7 @@
 
                     <div
                         bind:this={messageContainer}
-                        class="flex-1 space-y-2 overflow-y-auto px-3 py-3 md:px-4"
+                        class="min-h-0 flex-1 space-y-2 overflow-y-auto px-3 py-3 md:px-4"
                     >
                         {#if messages.length === 0}
                             <div
@@ -633,9 +633,9 @@
                     </div>
 
                     <div class="border-t border-base-300 p-3 md:p-4">
-                        <div class="join w-full">
+                        <div class="flex w-full gap-2 overflow-hidden">
                             <input
-                                class="input input-bordered join-item w-full"
+                                class="input input-bordered min-w-0 flex-1"
                                 bind:value={messageInput}
                                 disabled={status !== "connected"}
                                 placeholder={status === "connected"
@@ -645,7 +645,7 @@
                                     event.key === "Enter" && sendChatMessage()}
                             />
                             <button
-                                class="btn btn-primary join-item"
+                                class="btn btn-primary shrink-0"
                                 on:click={sendChatMessage}
                                 disabled={status !== "connected"}
                             >
