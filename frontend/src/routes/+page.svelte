@@ -465,8 +465,12 @@
             </div>
         </div>
 
-        <div class="grid min-h-0 flex-1 gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
-            <aside class="card min-h-0 overflow-hidden border border-base-300 bg-base-100 shadow-sm">
+        <div
+            class="grid min-h-0 flex-1 gap-4 lg:grid-cols-[320px_minmax(0,1fr)]"
+        >
+            <aside
+                class="card min-h-0 overflow-hidden border border-base-300 bg-base-100 shadow-sm"
+            >
                 <div class="card-body min-h-0 gap-4 overflow-y-auto">
                     <h2 class="card-title text-base">
                         {activeTab === "public"
@@ -573,7 +577,9 @@
                 </div>
             </aside>
 
-            <section class="card min-h-0 overflow-hidden border border-base-300 bg-base-100 shadow-sm">
+            <section
+                class="card min-h-0 overflow-hidden border border-base-300 bg-base-100 shadow-sm"
+            >
                 <div class="card-body flex h-full min-h-0 flex-col p-0">
                     <div class="border-b border-base-300 px-4 py-3">
                         <h2 class="font-semibold">#{activeChannelLabel()}</h2>
