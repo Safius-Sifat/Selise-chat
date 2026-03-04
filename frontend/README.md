@@ -1,6 +1,6 @@
-# Group Chat Frontend (SvelteKit + Tailwind + daisyUI)
+# PocketBase Chat Frontend
 
-This app is a chat UI for the backend in `../ws-server.ts` with separate tabs for public and private chat.
+SvelteKit frontend for the PocketBase-backed chat server in `../ws-server.ts`.
 
 ## Stack
 
@@ -8,43 +8,32 @@ This app is a chat UI for the backend in `../ws-server.ts` with separate tabs fo
 - Tailwind CSS v4
 - daisyUI
 
-## Run locally
+## Features
 
-From the project root (`node-server`), start backend and frontend in separate terminals:
+- Email/password auth flow (sign up + sign in)
+- Conversation sidebar like WhatsApp (direct + group)
+- One-to-one chat with registered users
+- Group discovery and join/leave
+- Group creation UI
+- Typing indicator + online presence
+- Sent/delivered/seen message status
+- Reply to message
+- Image upload with optimistic message UI
+- Chat tones (join, receive, and `fah` easter egg)
+
+## Run
 
 ```sh
-# terminal 1 (websocket backend)
-npm run dev:ws
-
-# terminal 2 (svelte frontend)
 cd frontend
+npm install
 npm run dev
 ```
 
-Open the frontend URL shown by Vite (usually `http://localhost:5173`).
+The frontend expects the backend URL to be set in the login form (defaults to `https://selise.notice.fit`).
 
-## Usage
+For complete backend + PocketBase setup instructions, see [../README.md](../README.md).
 
-1. Keep **Secure WebSocket Server** as `wss://selise.notice.fit` (SSL)
-2. Enter your **name**
-3. Choose a header tab:
-	- **Public**: everyone in public channel receives messages
-	- **Private**: room-based messages only for that group
-4. In **Private** tab, enter a **group name** and click **Join Room**
-5. Send messages in the chat composer
-
-Private room messages are isolated to that room only.
-
-## Features
-
-- Public channel chat tab
-- Private room chat tab
-- Join/switch private rooms at runtime
-- Online member list for private rooms
-- System events for join/leave
-- Chat bubbles with sender/time display
-
-## Quality checks
+## Checks
 
 ```sh
 npm run check
