@@ -63,6 +63,12 @@ If you disable auto-bootstrap, create the following collections manually in Pock
 
 Set these before running backend:
 
+Create a local `.env` from the template:
+
+```bash
+cp .env.example .env
+```
+
 - `POCKETBASE_URL` (default: `http://127.0.0.1:8090`)
 - `POCKETBASE_ADMIN_EMAIL` (required for server-side DB/storage operations)
 - `POCKETBASE_ADMIN_PASSWORD` (required)

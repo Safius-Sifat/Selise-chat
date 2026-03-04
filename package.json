@@ -6,12 +6,12 @@
     "main": "dist/server.js",
     "scripts": {
         "build": "tsc",
-        "start": "node dist/server.js",
-        "dev": "tsx server.ts",
-        "start:ws": "node dist/ws-server.js",
-        "dev:ws": "tsx ws-server.ts",
-        "start:chat": "node dist/ws-server.js",
-        "dev:chat": "tsx ws-server.ts"
+        "start": "node --env-file-if-exists=.env dist/server.js",
+        "dev": "node --env-file-if-exists=.env --import tsx server.ts",
+        "start:ws": "node --env-file-if-exists=.env dist/ws-server.js",
+        "dev:ws": "node --env-file-if-exists=.env --import tsx ws-server.ts",
+        "start:chat": "node --env-file-if-exists=.env dist/ws-server.js",
+        "dev:chat": "node --env-file-if-exists=.env --import tsx ws-server.ts"
     },
     "dependencies": {
         "cors": "^2.8.5",
