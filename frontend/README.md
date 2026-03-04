@@ -23,13 +23,25 @@ SvelteKit frontend for the PocketBase-backed chat server in `../ws-server.ts`.
 
 ## Run
 
+Create local env from template:
+
+```sh
+cp .env.example .env
+```
+
+Set the backend URL in `.env`:
+
+```sh
+PUBLIC_API_BASE_URL=https://selise.notice.fit
+```
+
 ```sh
 cd frontend
 npm install
 npm run dev
 ```
 
-The frontend expects the backend URL to be set in the login form (defaults to `https://selise.notice.fit`).
+The frontend uses `PUBLIC_API_BASE_URL` from env (no backend URL input in the auth UI).
 
 For complete backend + PocketBase setup instructions, see [../README.md](../README.md).
 
