@@ -216,6 +216,18 @@ const getPocketbaseErrorMessage = (error: unknown): string => {
     return 'Unknown server error';
 };
 
+const getCollectionRawFields = (collection: RecordMap): RecordMap[] => {
+    if (Array.isArray(collection.fields)) {
+        return collection.fields as RecordMap[];
+    }
+
+    if (Array.isArray(collection.schema)) {
+        return collection.schema as RecordMap[];
+    }
+
+    return [];
+};
+
 const getFileUrl = (record: RecordMap, fieldName: string): string | null => {
     const fileName = asString(record[fieldName]);
 
@@ -564,7 +576,19 @@ const getCollectionByName = async (collectionName: string): Promise<RecordMap | 
         return (await adminPb.collections.getOne(collectionName)) as unknown as RecordMap;
     } catch (error) {
         if (isNotFoundError(error)) {
-            return null;
+            try {
+                const collections = (await adminPb.collections.getFullList({
+                    filter: `name = "${escapeFilterValue(collectionName)}"`
+                })) as unknown as RecordMap[];
+
+                const found = collections.find(
+                    (collection) => asString(collection.name) === collectionName
+                );
+
+                return found ?? null;
+            } catch {
+                return null;
+            }
         }
 
         throw error;
@@ -576,9 +600,7 @@ const ensureCollectionFields = async (
     desiredFieldSpecs: CollectionFieldSpec[]
 ): Promise<{ collection: RecordMap; addedFieldNames: string[] }> => {
     const collectionId = asString(collection.id);
-    const existingFields = Array.isArray(collection.fields)
-        ? (collection.fields as RecordMap[]).map((field) => cloneRecordMap(field))
-        : [];
+    const existingFields = getCollectionRawFields(collection).map((field) => cloneRecordMap(field));
 
     const existingByName = new Map<string, RecordMap>();
     for (const field of existingFields) {
@@ -618,9 +640,15 @@ const ensureCollectionFields = async (
         };
     }
 
-    await adminPb.collections.update(collectionId, {
-        fields: existingFields
-    });
+    try {
+        await adminPb.collections.update(collectionId, {
+            fields: existingFields
+        });
+    } catch {
+        await adminPb.collections.update(collectionId, {
+            schema: existingFields
+        });
+    }
 
     const refreshed = (await adminPb.collections.getOne(collectionId)) as unknown as RecordMap;
 
@@ -638,11 +666,21 @@ const ensureBaseCollection = async (
 
     if (!collection) {
         try {
-            collection = (await adminPb.collections.create({
-                name: collectionName,
-                type: 'base',
-                fields: desiredFieldSpecs.map((field) => toFieldPayload(field))
-            })) as unknown as RecordMap;
+            try {
+                collection = (await adminPb.collections.create({
+                    name: collectionName,
+                    type: 'base',
+                    fields: desiredFieldSpecs.map((field) => toFieldPayload(field))
+                })) as unknown as RecordMap;
+            } catch {
+                collection = (await adminPb.collections.create({
+                    name: collectionName,
+                    type: 'base',
+                    schema: desiredFieldSpecs.map((field) => toFieldPayload(field))
+                })) as unknown as RecordMap;
+            }
+
+            console.log(`[schema bootstrap] Created collection "${collectionName}".`);
         } catch (error) {
             const existingCollection = await getCollectionByName(collectionName);
 
@@ -656,7 +694,6 @@ const ensureBaseCollection = async (
             );
         }
 
-        console.log(`[schema bootstrap] Created collection "${collectionName}".`);
         return collection;
     }
 
