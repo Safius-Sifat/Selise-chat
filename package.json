@@ -1,0 +1,23 @@
+{
+    "name": "node-server",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Minimal Node HTTP server with one endpoint",
+    "main": "dist/server.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "dev": "tsx server.ts",
+        "start:ws": "node dist/ws-server.js",
+        "dev:ws": "tsx ws-server.ts"
+    },
+    "dependencies": {
+        "ws": "^8.18.3"
+    },
+    "devDependencies": {
+        "@types/node": "^24.6.0",
+        "@types/ws": "^8.5.13",
+        "tsx": "^4.20.6",
+        "typescript": "^5.9.3"
+    }
+}
