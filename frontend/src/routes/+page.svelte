@@ -405,7 +405,7 @@
     });
 </script>
 
-<main class="h-dvh overflow-hidden bg-base-200 p-3 md:p-4">
+<main class="box-border h-dvh overflow-hidden bg-base-200 p-3 md:p-4">
     <div class="mx-auto flex h-full max-w-6xl flex-col gap-4 overflow-hidden">
         <div
             class="navbar rounded-box border border-base-300 bg-base-100 px-4 shadow-sm"

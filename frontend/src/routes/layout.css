@@ -3,3 +3,13 @@
 @plugin 'daisyui' {
     themes: light --default, dark --prefersdark;
 }
+
+@layer base {
+
+    html,
+    body {
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
+}
