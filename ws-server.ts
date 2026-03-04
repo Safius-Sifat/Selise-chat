@@ -199,6 +199,16 @@ const getPocketbaseErrorMessage = (error: unknown): string => {
         const response = (error as { response?: Record<string, unknown> }).response;
 
         if (response && typeof response.message === 'string') {
+            const details = response.data;
+
+            if (typeof details === 'object' && details !== null && Object.keys(details).length > 0) {
+                try {
+                    return `${response.message} ${JSON.stringify(details)}`;
+                } catch {
+                    return response.message;
+                }
+            }
+
             return response.message;
         }
     }
@@ -393,9 +403,6 @@ const toFieldPayload = (spec: CollectionFieldSpec): RecordMap => {
         name: spec.name,
         type: spec.type,
         required: spec.required ?? false,
-        hidden: false,
-        presentable: false,
-        system: false,
         options: spec.options ?? {}
     };
 };
@@ -415,11 +422,7 @@ const buildConversationFieldSpecs = (usersCollectionId: string): CollectionField
             name: 'title',
             type: 'text',
             required: false,
-            options: {
-                min: null,
-                max: null,
-                pattern: ''
-            }
+            options: {}
         },
         {
             name: 'isPublic',
@@ -455,10 +458,7 @@ const buildConversationFieldSpecs = (usersCollectionId: string): CollectionField
             name: 'lastMessageAt',
             type: 'date',
             required: false,
-            options: {
-                min: '',
-                max: ''
-            }
+            options: {}
         }
     ];
 };
@@ -499,11 +499,7 @@ const buildMessageFieldSpecs = (params: {
             name: 'text',
             type: 'text',
             required: false,
-            options: {
-                min: null,
-                max: null,
-                pattern: ''
-            }
+            options: {}
         },
         {
             name: 'image',
@@ -513,8 +509,7 @@ const buildMessageFieldSpecs = (params: {
                 maxSelect: 1,
                 maxSize: 15728640,
                 mimeTypes: [],
-                thumbs: [],
-                protected: false
+                thumbs: []
             }
         },
         {
@@ -530,27 +525,19 @@ const buildMessageFieldSpecs = (params: {
             name: 'deliveredTo',
             type: 'json',
             required: false,
-            options: {
-                maxSize: 0
-            }
+            options: {}
         },
         {
             name: 'seenBy',
             type: 'json',
             required: false,
-            options: {
-                maxSize: 0
-            }
+            options: {}
         },
         {
             name: 'clientTempId',
             type: 'text',
             required: false,
-            options: {
-                min: null,
-                max: null,
-                pattern: ''
-            }
+            options: {}
         }
     ];
 
@@ -650,11 +637,24 @@ const ensureBaseCollection = async (
     let collection = await getCollectionByName(collectionName);
 
     if (!collection) {
-        collection = (await adminPb.collections.create({
-            name: collectionName,
-            type: 'base',
-            fields: desiredFieldSpecs.map((field) => toFieldPayload(field))
-        })) as unknown as RecordMap;
+        try {
+            collection = (await adminPb.collections.create({
+                name: collectionName,
+                type: 'base',
+                fields: desiredFieldSpecs.map((field) => toFieldPayload(field))
+            })) as unknown as RecordMap;
+        } catch (error) {
+            const existingCollection = await getCollectionByName(collectionName);
+
+            if (!existingCollection) {
+                throw error;
+            }
+
+            collection = existingCollection;
+            console.warn(
+                `[schema bootstrap] Collection "${collectionName}" was not created because it already exists or was created concurrently.`
+            );
+        }
 
         console.log(`[schema bootstrap] Created collection "${collectionName}".`);
         return collection;
@@ -1717,16 +1717,20 @@ server.listen(PORT, async () => {
     try {
         await ensureAdminAuth();
         console.log('PocketBase admin authentication succeeded.');
-
-        if (POCKETBASE_AUTO_BOOTSTRAP_SCHEMA) {
-            await bootstrapPocketbaseSchema();
-        } else {
-            console.log(
-                'PocketBase schema bootstrap disabled (set POCKETBASE_AUTO_BOOTSTRAP_SCHEMA=true to enable).'
-            );
-        }
     } catch (error) {
         console.error('PocketBase admin authentication failed:', getPocketbaseErrorMessage(error));
+    }
+
+    if (POCKETBASE_AUTO_BOOTSTRAP_SCHEMA) {
+        try {
+            await bootstrapPocketbaseSchema();
+        } catch (error) {
+            console.error('PocketBase schema bootstrap failed:', getPocketbaseErrorMessage(error));
+        }
+    } else {
+        console.log(
+            'PocketBase schema bootstrap disabled (set POCKETBASE_AUTO_BOOTSTRAP_SCHEMA=true to enable).'
+        );
     }
 
     console.log(`Chat backend running on http://localhost:${PORT}`);
