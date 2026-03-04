@@ -5,8 +5,6 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [tailwindcss(), sveltekit()],
 
-
-
     preview: {
         port: 4173,
         allowedHosts: ['selise.notice.fit'] // <--- Add this line
